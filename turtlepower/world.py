@@ -1,10 +1,8 @@
 from __future__ import division, print_function, absolute_import
-from time import sleep
 
 from random import randint, random, shuffle
-from time import time
+from turtle import TurtleScreen, RawTurtle, TK
 
-from turtle import TurtleScreen, RawTurtle, TK, mainloop, bye
 
 def wrap(t, W, H):
     """wrap a turtle coords around"""
@@ -48,6 +46,7 @@ def clamp(t, W, H):
     if ny is not None:
         t.sety(ny)
 
+
 class TurtleWorld(object):
 
     def __init__(self, width, height, borders=wrap):
@@ -57,15 +56,18 @@ class TurtleWorld(object):
         self.half_height = height // 2
         self.borders = borders
 
-        # intialise screen and turn off auto-render
-        window = TK.Canvas(width=width, height=height)
-        window.pack()
-        self.screen = TurtleScreen(window)
-        self.screen.tracer(0, 0)
+        self.init_screen()
+
         self.fps = 0
         self.done = True
         self.turtles = []
-        self.update_freq = 1000 #int(1 / 30.0 * 1000)
+
+    def init_screen(self):
+        # intialise screen and turn off auto-render
+        window = TK.Canvas(width=self.width, height=self.height)
+        window.pack()
+        self.screen = TurtleScreen(window)
+        self.screen.tracer(0, 0)
 
     def position_turtle(self, t, pos, angle):
         # move to location
@@ -84,7 +86,6 @@ class TurtleWorld(object):
         t.showturtle()
         t.pendown()
         return t
-
 
     def print_fps(self):
         if not self.done:
@@ -114,7 +115,7 @@ class TurtleWorld(object):
         #self.screen.ontimer(self.print_fps, 1000)
         self.ticks = ticks
         self.screen.ontimer(self.tick, 33)
-        mainloop()
+        self.screen.mainloop()
 
     def tick(self):
         shuffle(self.turtles)
@@ -130,26 +131,31 @@ class TurtleWorld(object):
             self.screen.ontimer(self.tick, 33)
 
 
-class PowerTurtle(RawTurtle):
+class PowerTurtleMixin(object):
     type = "turtle"
 
     def __init__(self, world):
         self.world = world
-        super(PowerTurtle, self).__init__(world.screen)
+        super(PowerTurtleMixin, self).__init__(world.screen)
         self.setup()
 
     def setup(self):
-        pass
+        super(PowerTurtleMixin, self).setup()
 
     def set_callback(self, callback):
-        self.callback = lambda w: callback(self, w)
+        self.callback = lambda world: callback(self, world)
 
     def turn_towards(self, desired, amount):
         heading = self.heading()
-        diff = abs(desired - heading)
-        amount = min(amount, diff)
-        if desired > heading:
-            self.left(amount)
+        angle = desired - heading
+        angle = (angle + 180) % 360 - 180
+        if angle >= 0:
+            amount = min(amount, angle)
         else:
-            self.right(amount)
-        return diff - amount
+            amount = max(-amount, angle)
+        self.left(amount)
+        return amount
+
+
+class PowerTurtle(PowerTurtleMixin, RawTurtle):
+    pass

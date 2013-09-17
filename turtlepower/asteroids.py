@@ -1,10 +1,10 @@
 from __future__ import division, print_function, absolute_import
+import sys
 from time import sleep
-
-from random import randint, random, shuffle
-from time import time
+from random import randint, random
 
 from world import TurtleWorld, PowerTurtle, wrap
+
 
 class Asteroid(PowerTurtle):
     type = 'asteroid'
@@ -61,14 +61,16 @@ class Ship(PowerTurtle):
             asteroids = [t for t in world.turtles if t.type == 'asteroid']
             if not asteroids:
                 self.write("I WIN, PUNY HUMAN")
-                sleep(5)
-                bye()
+                sleep(10)
+                sys.exit(0)
             if self.state != 'shooting':
                 self.runaway()
             else:
-                distances = [(self.distance(a) - a.radius, a) for a in asteroids]
+                distances = [
+                    (self.distance(a) - a.radius, a) for a in asteroids
+                ]
                 distances.sort()
-                dangerous =[(d, a) for d, a in distances if d < 70]
+                dangerous = [(d, a) for d, a in distances if d < 70]
                 if dangerous:
                     self.run(dangerous)
                 else:
@@ -85,7 +87,11 @@ class Ship(PowerTurtle):
     def fire(self):
         if self.rocket is None:
             self.rocket = Rocket(w)
-            self.rocket.init(self.heading(), self.pos(), self.__range)
+            self.rocket.init(
+                self.heading() + (random() * 4) - 2,
+                self.pos(),
+                self.__range
+            )
             self.world.add_turtle(self.rocket)
 
     def die(self):
@@ -113,8 +119,6 @@ class Ship(PowerTurtle):
                 self.state = 'shooting'
 
 
-
-
 class Rocket(PowerTurtle):
     type = 'rocket'
 
@@ -129,7 +133,7 @@ class Rocket(PowerTurtle):
         self.setheading(heading)
         self.setpos(*pos)
         self.pendown()
-        self.__range= range
+        self.__range = range
 
     def callback(self, world):
         if self.__travelled > self.__range:

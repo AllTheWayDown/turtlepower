@@ -1,14 +1,17 @@
+import sys
 from random import randint, random
 from time import time
 
 from turtle import TurtleScreen, RawTurtle, TK
 
-import pyglet
-
 # simulation parameters
 W = 800
 H = 800
-n = 500  # num turtles
+n = 100  # num turtles
+
+if len(sys.argv) > 1:
+    n = int(sys.argv[1])
+
 max_speed = 2  # how fast they move
 max_turn = 10  # maximum turn speed in degrees
 too_close = 20  # how close is too close?
@@ -62,12 +65,6 @@ def clip(t):
 # intialise screen and turn off auto-render
 window = TK.Canvas(width=W, height=H)
 window.pack()
-
-#from turgles import TurgleScreenBase
-#TurtleScreen.__bases__ = (TurgleScreenBase,)
-#window = pyglet.window.Window(width=W, height=H)
-
-
 s = TurtleScreen(window)
 s.tracer(0, 0)
 
@@ -80,7 +77,7 @@ for t in turtles:
     t.goto(randint(0, W) - W / 2, randint(0, H) - H / 2)
     t.right(randint(0, 360))
     t.st()
-    t.pendown()
+    #t.pendown()
 
 
 def random_walk(t):
