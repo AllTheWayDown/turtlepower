@@ -4,6 +4,11 @@ from random import randint, random, shuffle
 from turtle import TurtleScreen, RawTurtle, TK
 
 
+def noisy(value, variance=0.01):
+    size = value * variance
+    return value + (random() * size * 2) - size
+
+
 def wrap(t, W, H):
     """wrap a turtle coords around"""
     x, y = t.pos()
@@ -18,13 +23,15 @@ def wrap(t, W, H):
     elif y < -H / 2:
         ny = y + H
 
+    down = t.isdown()
     if nx is not None:
         t.penup()
         t.setx(nx)
     if ny is not None:
         t.penup()
         t.sety(ny)
-    t.pendown()
+    if down:
+        t.pendown()
 
 
 def clamp(t, W, H):
@@ -86,6 +93,9 @@ class TurtleWorld(object):
         t.showturtle()
         t.pendown()
         return t
+
+    def random_position(self, turtle):
+        return self.position_turtle(turtle, None, None)
 
     def print_fps(self):
         if not self.done:
@@ -155,6 +165,15 @@ class PowerTurtleMixin(object):
             amount = max(-amount, angle)
         self.left(amount)
         return amount
+
+    def get_neighbours(self, distance, angle):
+        neighbours = []
+        for t in self.world.turtles:
+            if t is not self:
+                a = abs(self.heading() - self.towards(t))
+                if a < angle and self.distance(t) < distance:
+                    neighbours.append(t)
+        return neighbours
 
 
 class PowerTurtle(PowerTurtleMixin, RawTurtle):
