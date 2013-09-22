@@ -177,4 +177,6 @@ class PowerTurtleMixin(object):
 
 
 class PowerTurtle(PowerTurtleMixin, RawTurtle):
-    pass
+
+    def setup(self):
+        pass
