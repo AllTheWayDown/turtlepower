@@ -99,21 +99,21 @@ def print_frames():
 s.ontimer(print_frames, 1000)
 
 # run for 1000 ticks
-mt = mc = 0
-rt = rc = 0
+move_timer = move_count = 0
+render_timer = render_count = 0
 for i in range(200):
     start = time()
     for t in turtles:
         random_walk(t)
         wrap(t)
-    mt += time() - start
-    mc += 1
+    move_timer += time() - start
+    move_count += 1
     start = time()
     s.update()
-    rt += time() - start
-    rc += 1
+    render_timer += time() - start
+    render_count += 1
     frames += 1
 
 
-print(mt/mc)
-print(rt/rc)
+print(move_timer/move_count)
+print(render_timer/render_count)
