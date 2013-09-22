@@ -15,11 +15,11 @@ def _bound_check(bound_func, before, expected):
     bound_func(mock_turtle, 10, 10)
     after_x, after_y = before
     if len(mock_turtle.setx.call_args_list):
-        args, _ = mock_turtle.setx.call_args
-        after_x = args[0]
+        setx_args, _ = mock_turtle.setx.call_args
+        after_x = setx_args[0]
     if len(mock_turtle.sety.call_args_list):
-        args, _ = mock_turtle.sety.call_args
-        after_y = args[0]
+        sety_args, _ = mock_turtle.sety.call_args
+        after_y = sety_args[0]
     eq_(expected, (after_x, after_y))
 
 
