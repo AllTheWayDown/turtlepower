@@ -4,6 +4,8 @@ from time import time
 
 from turtle import TurtleScreen, RawTurtle, TK
 
+from turtlepower.world import wrap
+
 # simulation parameters
 W = 800
 H = 800
@@ -18,48 +20,6 @@ too_close = 20  # how close is too close?
 e = 0.1
 sight = 50
 fov = 270
-
-
-def wrap(t):
-    x, y = t.pos()
-    nx = ny = None
-    if x > W / 2:
-        nx = x - W
-    elif x < -W / 2:
-        nx = x + W
-
-    if y > H / 2:
-        ny = y - H
-    elif y < -H / 2:
-        ny = y + H
-
-    if nx is not None:
-        t.penup()
-        t.setx(nx)
-    if ny is not None:
-        t.penup()
-        t.sety(ny)
-    t.pendown()
-
-
-def clip(t):
-    """Clip turtle to window"""
-    x, y = t.pos()
-    nx = ny = None
-    if x > W / 2:
-        nx = W / 2
-    elif x < -W / 2:
-        nx = -W / 2
-
-    if y > H / 2:
-        ny = H / 2
-    elif y < -H / 2:
-        ny = -H / 2
-
-    if nx is not None:
-        t.setx(nx)
-    if ny is not None:
-        t.sety(ny)
 
 
 # intialise screen and turn off auto-render
@@ -105,7 +65,7 @@ for i in range(200):
     start = time()
     for t in turtles:
         random_walk(t)
-        wrap(t)
+        wrap(t, W, H)
     move_timer += time() - start
     move_count += 1
     start = time()
