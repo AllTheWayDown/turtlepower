@@ -28,8 +28,6 @@ def random_walk(turtle, world=None):
 
 
 for _ in range(n):
-    x, y = (randint(0, W) - W / 2, randint(0, H) - H / 2)
-    angle = randint(0, 360)
-    world.create_turtle(random_walk, (x, y), angle)
+    world.create_turtle(callback=random_walk)
 
 world.run()
