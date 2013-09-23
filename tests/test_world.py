@@ -2,9 +2,9 @@ import random
 from turtle import TurtleScreen
 
 from mock import call, Mock, patch
-from nose.tools import eq_
+from nose.tools import assert_greater, eq_
 
-from turtlepower.world import clamp, PowerTurtle, TurtleWorld, wrap
+from turtlepower.world import clamp, noisy, PowerTurtle, TurtleWorld, wrap
 
 
 def _make_mock_turtle(x, y):
@@ -30,6 +30,20 @@ def _bound_check(bound_func, before, expected):
         sety_args, _ = mock_turtle.sety.call_args
         after_y = sety_args[0]
     eq_(expected, (after_x, after_y))
+
+
+def _check_noisy(value, variance):
+    results = [noisy(value, variance) for _ in range(1000)]
+    lower_bound = value * (1 - variance)
+    upper_bound = value * (1 + variance)
+    for result in results:
+        assert_greater(upper_bound, result)
+        assert_greater(result, lower_bound)
+
+
+def test_noisy():
+    for value, variance in [(1, 0.01), (2, 0.01), (1, 1), (1000, 0.2)]:
+        yield _check_noisy, value, variance
 
 
 def test_wrap():
