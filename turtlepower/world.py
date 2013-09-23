@@ -111,7 +111,7 @@ class TurtleWorld(object):
     def random_position(self, turtle):
         return self.position_turtle(turtle)
 
-    def _print_fps(self):
+    def _print_fps(self):  # pragma: no cover
         if not self.done:
             print(self.fps)
             self.screen.ontimer(self._print_fps, 1000)
