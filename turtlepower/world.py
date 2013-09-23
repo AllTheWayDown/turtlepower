@@ -4,6 +4,10 @@ from random import randint, random, shuffle
 from turtle import TurtleScreen, RawTurtle, TK
 from tkinter import Tk
 
+
+DEBUG = False
+
+
 def noisy(value, variance=0.01):
     size = value * variance
     return value + (random() * size * 2) - size
@@ -124,7 +128,8 @@ class TurtleWorld(object):
     def run(self, ticks=1000):
         # run for 1000 ticks
         self.done = False
-        #self.screen.ontimer(self.print_fps, 1000)
+        if DEBUG:
+            self.screen.ontimer(self.print_fps, 1000)
         self.ticks = ticks
         self.screen.ontimer(self.tick, 33)
         self.screen.mainloop()
