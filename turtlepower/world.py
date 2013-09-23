@@ -149,6 +149,7 @@ class TurtleWorld(object):
 
 
 class PowerTurtleMixin(object):
+    """A set of useful extra methods for a turtle"""
     type = "turtle"
 
     def __init__(self, world):
@@ -157,14 +158,17 @@ class PowerTurtleMixin(object):
         self.setup()
 
     def setup(self):
+        """Initialisation function, called once"""
         super(PowerTurtleMixin, self).setup()
 
     def set_callback(self, callback):
+        """Set the callback to a function, for classes usage"""
         self.callback = lambda world: callback(self, world)
 
-    def turn_towards(self, desired_heading, amount):
-        current_heading = self.heading()
-        angle = desired_heading - current_heading
+    def turn_towards(self, desired, amount):
+        """Helper to to turn a small amount towards a heading"""
+        heading = self.heading()
+        angle = desired - heading
         angle = (angle + 180) % 360 - 180
         if angle >= 0:
             amount = min(amount, angle)
@@ -173,7 +177,9 @@ class PowerTurtleMixin(object):
         self.left(amount)
         return amount
 
-    def get_neighbours(self, distance, angle):
+    def get_neighbours(self, distance=60, angle=120):
+        """Other turtles you can see that are with distance and angle of your
+        current heading"""
         neighbours = []
         for t in self.world.turtles:
             if t is not self:
@@ -186,4 +192,5 @@ class PowerTurtleMixin(object):
 class PowerTurtle(PowerTurtleMixin, RawTurtle):
 
     def setup(self):
+        """PowerTurtle based on stdlib turtle module"""
         pass
