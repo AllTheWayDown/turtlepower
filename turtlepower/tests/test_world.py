@@ -36,6 +36,20 @@ def test_wrap():
         yield _bound_check, wrap, before, expected
 
 
+def test_wrap_doesnt_put_the_pen_down_if_it_isnt_already_down():
+    turtle = _make_mock_turtle(-9, -9)
+    turtle.isdown.return_value = False
+    wrap(turtle, 10, 10)
+    eq_(0, turtle.pendown.call_count)
+
+
+def test_wrap_puts_the_pen_down_if_it_was_already_down():
+    turtle = _make_mock_turtle(-9, -9)
+    turtle.isdown.return_value = True
+    wrap(turtle, 10, 10)
+    eq_(1, turtle.pendown.call_count)
+
+
 def test_clamp():
     # Assume a width and height of 10
     for before, expected in [
