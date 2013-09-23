@@ -103,10 +103,10 @@ class TurtleWorld(object):
     def random_position(self, turtle):
         return self.position_turtle(turtle)
 
-    def print_fps(self):
+    def _print_fps(self):
         if not self.done:
             print(self.fps)
-            self.screen.ontimer(self.print_fps, 1000)
+            self.screen.ontimer(self._print_fps, 1000)
         self.fps = 0
 
     def create_turtle(self, callback, pos=None, angle=None):
@@ -129,7 +129,7 @@ class TurtleWorld(object):
         # run for 1000 ticks
         self.done = False
         if DEBUG:
-            self.screen.ontimer(self.print_fps, 1000)
+            self.screen.ontimer(self._print_fps, 1000)
         self.ticks = ticks
         self.screen.ontimer(self.tick, 33)
         self.screen.mainloop()
