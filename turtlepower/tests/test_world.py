@@ -73,6 +73,14 @@ def test_clamp():
 
 class TestTurtleWorld(object):
 
+    def test_position_turtle_uses_parameters(self):
+        turtle = _make_mock_turtle(0, 0)
+        world = _get_screenless_world()
+        x, y, angle = 1, 2, 3
+        world.position_turtle(turtle, (x, y), angle)
+        eq_([call(x, y)], turtle.goto.call_args_list)
+        eq_([call(angle)], turtle.setheading.call_args_list)
+
     def test_random_position(self):
         random.seed(0)
         turtle = _make_mock_turtle(0, 0)
