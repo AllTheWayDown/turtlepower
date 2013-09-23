@@ -1,8 +1,16 @@
 from __future__ import division, print_function, absolute_import
 
+import sys
 from random import randint, random, shuffle
 from turtle import TurtleScreen, RawTurtle, TK
-from tkinter import Tk
+
+
+if sys.version_info[0] < 3:
+    from Tkinter import Tk, mainloop
+else:
+    from tkinter import Tk
+    mainloop = False
+
 
 
 DEBUG = False
@@ -132,7 +140,10 @@ class TurtleWorld(object):
             self.screen.ontimer(self.print_fps, 1000)
         self.ticks = ticks
         self.screen.ontimer(self.tick, 33)
-        self.screen.mainloop()
+        if mainloop:
+            mainloop()
+        else:
+            self.screen.mainloop()
 
     def tick(self):
         shuffle(self.turtles)

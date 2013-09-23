@@ -1,9 +1,16 @@
 import random
+import sys
 
 from mock import call, Mock, patch
 from nose.tools import assert_greater, eq_
 
 from turtlepower.world import clamp, noisy, PowerTurtle, TurtleWorld, wrap
+
+
+if sys.version_info[0] < 3:
+    _super = '__builtin__.super'
+else:
+    _super = 'builtins.super'
 
 
 def _make_mock_turtle(x, y):
@@ -96,14 +103,18 @@ class TestTurtleWorld(object):
         eq_([call(x, y)], turtle.goto.call_args_list)
         eq_([call(angle)], turtle.setheading.call_args_list)
 
-    def test_position_turtle_defaults_to_random_position(self):
-        random.seed(0)
+    @patch('turtlepower.world.randint')
+    @patch('turtlepower.world.random')
+    def test_position_turtle_defaults_to_random_position(
+            self, random, randint):
+        randint.side_effect = [1, 1, 3, 2, 5, 5]
+        random.side_effect = [0.0, 0.5]
         turtle = _make_mock_turtle(0, 0)
         world = _get_screenless_world()
         world.position_turtle(turtle)
         world.position_turtle(turtle)
         eq_([call(1, 1), call(3, 2)], turtle.goto.call_args_list)
-        eq_([call(14.574376145079917), call(145.77628948214914)],
+        eq_([call(0.0), call(180.0)],
             turtle.setheading.call_args_list)
 
     def test_random_position_uses_position_turtle(self):
@@ -114,7 +125,7 @@ class TestTurtleWorld(object):
         eq_([call(turtle)], world.position_turtle.call_args_list)
 
 
-@patch('builtins.super', Mock())
+@patch(_super, Mock())
 def _turn_towards_check(current_heading, desired_heading, amount,
                         expected_amount):
     turtle = PowerTurtle(Mock())
