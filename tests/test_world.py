@@ -95,6 +95,29 @@ def test_clamp():
 
 class TestTurtleWorld(object):
 
+    @patch('turtlepower.world.PowerTurtle')
+    def test_create_turtle_places_turtle(self, power_turtle):
+        world = _get_screenless_world()
+        world.position_turtle = Mock()
+        x, y, angle = 1, 2, 3
+        world.create_turtle(Mock(), (x, y), angle)
+        eq_([call(power_turtle.return_value, (x, y), angle)],
+            world.position_turtle.call_args_list)
+
+    @patch('turtlepower.world.PowerTurtle')
+    def test_create_turtle_returns_turtle(self, power_turtle):
+        world = _get_screenless_world()
+        created_turtle = world.create_turtle(Mock(), (0, 0), 0)
+        eq_(power_turtle.return_value, created_turtle)
+
+    @patch('turtlepower.world.PowerTurtle')
+    def test_create_turtle_defaults_to_random_position(self, power_turtle):
+        world = _get_screenless_world()
+        world.position_turtle = Mock()
+        world.create_turtle(Mock())
+        eq_([call(power_turtle.return_value, None, None)],
+            world.position_turtle.call_args_list)
+
     def test_position_turtle_uses_parameters(self):
         turtle = _make_mock_turtle(0, 0)
         world = _get_screenless_world()
