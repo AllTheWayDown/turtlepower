@@ -81,12 +81,12 @@ class TestTurtleWorld(object):
         eq_([call(x, y)], turtle.goto.call_args_list)
         eq_([call(angle)], turtle.setheading.call_args_list)
 
-    def test_random_position(self):
+    def test_position_turtle_defaults_to_random_position(self):
         random.seed(0)
         turtle = _make_mock_turtle(0, 0)
         world = _get_screenless_world()
-        world.random_position(turtle)
-        world.random_position(turtle)
+        world.position_turtle(turtle)
+        world.position_turtle(turtle)
         eq_([call(1, 1), call(3, 2)], turtle.goto.call_args_list)
         eq_([call(14.574376145079917), call(145.77628948214914)],
             turtle.setheading.call_args_list)
