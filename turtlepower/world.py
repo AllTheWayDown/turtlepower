@@ -79,15 +79,14 @@ class TurtleWorld(object):
         self.screen = TurtleScreen(window)
         self.screen.tracer(0, 0)
 
-    def position_turtle(self, t, pos, angle):
+    def position_turtle(self, t, pos=None, angle=None):
         # move to location
         t.hideturtle()
         t.penup()
         if pos is None:
-            x = randint(-self.half_width, self.half_width)
-            y = randint(-self.half_height, self.half_height)
-        else:
-            x, y = pos
+            pos = (randint(-self.half_width, self.half_width),
+                   randint(-self.half_height, self.half_height))
+        x, y = pos
         t.goto(x, y)
         if angle is None:
             angle = random() * 360
@@ -98,7 +97,7 @@ class TurtleWorld(object):
         return t
 
     def random_position(self, turtle):
-        return self.position_turtle(turtle, None, None)
+        return self.position_turtle(turtle)
 
     def print_fps(self):
         if not self.done:

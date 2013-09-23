@@ -1,13 +1,21 @@
-from mock import Mock
+import random
+
+from mock import call, Mock, patch
 from nose.tools import eq_
 
-from turtlepower.world import clamp, wrap
+from turtlepower.world import clamp, TurtleWorld, wrap
 
 
 def _make_mock_turtle(x, y):
     turtle = Mock()
     turtle.pos.return_value = (x, y)
     return turtle
+
+
+@patch('turtlepower.world.TurtleScreen', Mock())
+@patch('turtlepower.world.TK.Canvas', Mock())
+def _get_screenless_world():
+    return TurtleWorld(10, 10)
 
 
 def _bound_check(bound_func, before, expected):
@@ -61,3 +69,31 @@ def test_clamp():
         ((-9, -9), (-5, -5)),  # Off both
     ]:
         yield _bound_check, clamp, before, expected
+
+
+class TestTurtleWorld(object):
+
+    def test_position_turtle_uses_parameters(self):
+        turtle = _make_mock_turtle(0, 0)
+        world = _get_screenless_world()
+        x, y, angle = 1, 2, 3
+        world.position_turtle(turtle, (x, y), angle)
+        eq_([call(x, y)], turtle.goto.call_args_list)
+        eq_([call(angle)], turtle.setheading.call_args_list)
+
+    def test_position_turtle_defaults_to_random_position(self):
+        random.seed(0)
+        turtle = _make_mock_turtle(0, 0)
+        world = _get_screenless_world()
+        world.position_turtle(turtle)
+        world.position_turtle(turtle)
+        eq_([call(1, 1), call(3, 2)], turtle.goto.call_args_list)
+        eq_([call(14.574376145079917), call(145.77628948214914)],
+            turtle.setheading.call_args_list)
+
+    def test_random_position_uses_position_turtle(self):
+        turtle = Mock()
+        world = _get_screenless_world()
+        world.position_turtle = Mock()
+        world.random_position(turtle)
+        eq_([call(turtle)], world.position_turtle.call_args_list)
