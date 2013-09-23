@@ -1,5 +1,4 @@
 import random
-from turtle import TurtleScreen
 
 from mock import call, Mock, patch
 from nose.tools import assert_greater, eq_
