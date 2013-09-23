@@ -1,10 +1,7 @@
 import sys
-from random import randint, random
-from time import time
+from random import random
 
-from turtle import TurtleScreen, RawTurtle, TK
-
-from turtlepower.world import TurtleWorld, wrap
+from turtlepower.world import TurtleWorld
 
 # simulation parameters
 W = 800
