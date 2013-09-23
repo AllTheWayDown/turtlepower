@@ -9,49 +9,49 @@ def noisy(value, variance=0.01):
     return value + (random() * size * 2) - size
 
 
-def wrap(t, W, H):
+def wrap(turtle, screen_width, screen_height):
     """wrap a turtle coords around"""
-    x, y = t.pos()
-    nx = ny = None
-    if x > W / 2:
-        nx = x - W
-    elif x < -W / 2:
-        nx = x + W
+    x, y = turtle.pos()
+    new_x = new_y = None
+    if x > screen_width / 2:
+        new_x = x - screen_width
+    elif x < -screen_width / 2:
+        new_x = x + screen_width
 
-    if y > H / 2:
-        ny = y - H
-    elif y < -H / 2:
-        ny = y + H
+    if y > screen_height / 2:
+        new_y = y - screen_height
+    elif y < -screen_height / 2:
+        new_y = y + screen_height
 
-    down = t.isdown()
-    if nx is not None:
-        t.penup()
-        t.setx(nx)
-    if ny is not None:
-        t.penup()
-        t.sety(ny)
-    if down:
-        t.pendown()
+    was_down = turtle.isdown()
+    if new_x is not None:
+        turtle.penup()
+        turtle.setx(new_x)
+    if new_y is not None:
+        turtle.penup()
+        turtle.sety(new_y)
+    if was_down:
+        turtle.pendown()
 
 
-def clamp(t, W, H):
+def clamp(turtle, screen_width, screen_height):
     """Clamp turtle to window"""
-    x, y = t.pos()
-    nx = ny = None
-    if x > W / 2:
-        nx = W / 2
-    elif x < -W / 2:
-        nx = -W / 2
+    x, y = turtle.pos()
+    new_x = new_y = None
+    if x > screen_width / 2:
+        new_x = screen_width / 2
+    elif x < -screen_width / 2:
+        new_x = -screen_width / 2
 
-    if y > H / 2:
-        ny = H / 2
-    elif y < -H / 2:
-        ny = -H / 2
+    if y > screen_height / 2:
+        new_y = screen_height / 2
+    elif y < -screen_height / 2:
+        new_y = -screen_height / 2
 
-    if nx is not None:
-        t.setx(nx)
-    if ny is not None:
-        t.sety(ny)
+    if new_x is not None:
+        turtle.setx(new_x)
+    if new_y is not None:
+        turtle.sety(new_y)
 
 
 class TurtleWorld(object):
