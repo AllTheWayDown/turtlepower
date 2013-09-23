@@ -144,7 +144,7 @@ class Rocket(PowerTurtle):
             self.__travelled += 4
 
 
-w = TurtleWorld(600, 600, wrap)
+w = TurtleWorld(600, 600, wrap, "Asteroids")
 ship = Ship(w)
 w.ship = ship
 w.add_turtle(ship)

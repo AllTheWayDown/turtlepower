@@ -53,7 +53,7 @@ class Boid(PowerTurtle):
         self.forward(self._move)
 
 
-w = TurtleWorld(600, 600, wrap)
+w = TurtleWorld(600, 600, wrap, "Boids")
 for i in range(50):
     w.add_turtle(Boid(w))
 w.run(-1)
