@@ -1,5 +1,4 @@
 import random
-from turtle import TurtleScreen
 
 from mock import call, Mock, patch
 from nose.tools import assert_greater, eq_
@@ -15,6 +14,7 @@ def _make_mock_turtle(x, y):
 
 @patch('turtlepower.world.TurtleScreen', Mock())
 @patch('turtlepower.world.TK.Canvas', Mock())
+@patch('turtlepower.world.Tk', Mock())
 def _get_screenless_world():
     return TurtleWorld(10, 10)
 
