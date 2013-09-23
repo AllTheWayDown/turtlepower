@@ -90,3 +90,10 @@ class TestTurtleWorld(object):
         eq_([call(1, 1), call(3, 2)], turtle.goto.call_args_list)
         eq_([call(14.574376145079917), call(145.77628948214914)],
             turtle.setheading.call_args_list)
+
+    def test_random_position_uses_position_turtle(self):
+        turtle = Mock()
+        world = _get_screenless_world()
+        world.position_turtle = Mock()
+        world.random_position(turtle)
+        eq_([call(turtle)], world.position_turtle.call_args_list)

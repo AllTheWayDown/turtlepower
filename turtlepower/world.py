@@ -94,7 +94,7 @@ class TurtleWorld(object):
         return t
 
     def random_position(self, turtle):
-        return self.position_turtle(turtle, None, None)
+        return self.position_turtle(turtle)
 
     def print_fps(self):
         if not self.done:
