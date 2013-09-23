@@ -2,66 +2,67 @@ from __future__ import division, print_function, absolute_import
 
 from random import randint, random, shuffle
 from turtle import TurtleScreen, RawTurtle, TK
-
+from tkinter import Tk
 
 def noisy(value, variance=0.01):
     size = value * variance
     return value + (random() * size * 2) - size
 
 
-def wrap(turtle, screen_width, screen_height):
+def wrap(t, W, H):
     """wrap a turtle coords around"""
-    x, y = turtle.pos()
-    new_x = new_y = None
-    if x > screen_width / 2:
-        new_x = x - screen_width
-    elif x < -screen_width / 2:
-        new_x = x + screen_width
+    x, y = t.pos()
+    nx = ny = None
+    if x > W / 2:
+        nx = x - W
+    elif x < -W / 2:
+        nx = x + W
 
-    if y > screen_height / 2:
-        new_y = y - screen_height
-    elif y < -screen_height / 2:
-        new_y = y + screen_height
+    if y > H / 2:
+        ny = y - H
+    elif y < -H / 2:
+        ny = y + H
 
-    was_down = turtle.isdown()
-    if new_x is not None:
-        turtle.penup()
-        turtle.setx(new_x)
-    if new_y is not None:
-        turtle.penup()
-        turtle.sety(new_y)
-    if was_down:
-        turtle.pendown()
+    down = t.isdown()
+    if nx is not None:
+        t.penup()
+        t.setx(nx)
+    if ny is not None:
+        t.penup()
+        t.sety(ny)
+    if down:
+        t.pendown()
 
 
-def clamp(turtle, screen_width, screen_height):
+def clamp(t, W, H):
     """Clamp turtle to window"""
-    x, y = turtle.pos()
-    new_x = new_y = None
-    if x > screen_width / 2:
-        new_x = screen_width / 2
-    elif x < -screen_width / 2:
-        new_x = -screen_width / 2
+    x, y = t.pos()
+    nx = ny = None
+    if x > W / 2:
+        nx = W / 2
+    elif x < -W / 2:
+        nx = -W / 2
 
-    if y > screen_height / 2:
-        new_y = screen_height / 2
-    elif y < -screen_height / 2:
-        new_y = -screen_height / 2
+    if y > H / 2:
+        ny = H / 2
+    elif y < -H / 2:
+        ny = -H / 2
 
-    if new_x is not None:
-        turtle.setx(new_x)
-    if new_y is not None:
-        turtle.sety(new_y)
+    if nx is not None:
+        t.setx(nx)
+    if ny is not None:
+        t.sety(ny)
 
 
 class TurtleWorld(object):
 
-    def __init__(self, width, height, borders=wrap):
+    def __init__(self, width, height, borders=wrap, title="TurtlePower"):
         self.width = width
         self.half_width = width // 2
         self.height = height
         self.half_height = height // 2
         self.borders = borders
+        self.window_title = title
 
         self.init_screen()
 
@@ -71,7 +72,9 @@ class TurtleWorld(object):
 
     def init_screen(self):
         # intialise screen and turn off auto-render
-        window = TK.Canvas(width=self.width, height=self.height)
+        root = Tk()
+        root.wm_title(self.window_title)
+        window = TK.Canvas(master=root, width=self.width, height=self.height)
         window.pack()
         self.screen = TurtleScreen(window)
         self.screen.tracer(0, 0)
