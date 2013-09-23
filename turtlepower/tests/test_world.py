@@ -1,9 +1,10 @@
 import random
+from turtle import TurtleScreen
 
 from mock import call, Mock, patch
 from nose.tools import eq_
 
-from turtlepower.world import clamp, TurtleWorld, wrap
+from turtlepower.world import clamp, PowerTurtle, TurtleWorld, wrap
 
 
 def _make_mock_turtle(x, y):
@@ -97,3 +98,32 @@ class TestTurtleWorld(object):
         world.position_turtle = Mock()
         world.random_position(turtle)
         eq_([call(turtle)], world.position_turtle.call_args_list)
+
+
+@patch('builtins.super', Mock())
+def _turn_towards_check(current_heading, desired_heading, amount,
+                        expected_amount):
+    turtle = PowerTurtle(Mock())
+    turtle.left = Mock()
+    turtle.heading = Mock(return_value=current_heading)
+    actual_amount = turtle.turn_towards(desired_heading, amount)
+    eq_([call(expected_amount)], turtle.left.call_args_list)
+    eq_(expected_amount, actual_amount)
+
+
+def test_turn_towards():
+    test_cases = [
+        # current_heading, desired_heading, amount, expected_amount
+        (0, 0, 2, 0),  # no change
+        (0, 1, 2, 1),  # positive change within maximum
+        (0, 4, 3, 3),  # positive change hitting bounding
+        (0, -1, 2, -1),  # negative change within maximum
+        (0, -4, 3, -3),  # negative change hitting bounding
+        # non-zero current heading
+        (100, 101, 2, 1),  # positive change within maximum
+        (100, 104, 3, 3),  # positive change hitting bounding
+        (100, 99, 2, -1),  # negative change within maximum
+        (100, 96, 3, -3),  # negative change hitting bounding
+    ]
+    for current, desired, amount, expected in test_cases:
+        yield _turn_towards_check, current, desired, amount, expected

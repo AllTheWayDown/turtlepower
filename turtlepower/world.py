@@ -157,9 +157,9 @@ class PowerTurtleMixin(object):
     def set_callback(self, callback):
         self.callback = lambda world: callback(self, world)
 
-    def turn_towards(self, desired, amount):
-        heading = self.heading()
-        angle = desired - heading
+    def turn_towards(self, desired_heading, amount):
+        current_heading = self.heading()
+        angle = desired_heading - current_heading
         angle = (angle + 180) % 360 - 180
         if angle >= 0:
             amount = min(amount, angle)
