@@ -2,6 +2,7 @@ import random
 import sys
 
 from mock import call, Mock, patch
+from nose.plugins.skip import SkipTest
 from nose.tools import assert_greater, eq_
 
 from turtlepower.world import clamp, noisy, PowerTurtle, TurtleWorld, wrap
@@ -95,6 +96,42 @@ def test_clamp():
 
 class TestTurtleWorld(object):
 
+    def test_add_turtle_means_a_turtle_receives_ticks(self):
+        world = _get_screenless_world()
+        world.ticks = 0
+        turtle = _make_mock_turtle(0, 0)
+        world.tick()
+        eq_(0, turtle.callback.call_count)
+        world.add_turtle(turtle)
+        world.tick()
+        eq_(1, turtle.callback.call_count)
+
+    def test_create_turtle_means_a_turtle_receives_ticks(self):
+        raise SkipTest
+
+    @patch('turtlepower.world.PowerTurtle')
+    def test_create_turtle_places_turtle(self, power_turtle):
+        world = _get_screenless_world()
+        world.position_turtle = Mock()
+        x, y, angle = 1, 2, 3
+        world.create_turtle(Mock(), (x, y), angle)
+        eq_([call(power_turtle.return_value, (x, y), angle)],
+            world.position_turtle.call_args_list)
+
+    @patch('turtlepower.world.PowerTurtle')
+    def test_create_turtle_returns_turtle(self, power_turtle):
+        world = _get_screenless_world()
+        created_turtle = world.create_turtle(Mock(), (0, 0), 0)
+        eq_(power_turtle.return_value, created_turtle)
+
+    @patch('turtlepower.world.PowerTurtle')
+    def test_create_turtle_defaults_to_random_position(self, power_turtle):
+        world = _get_screenless_world()
+        world.position_turtle = Mock()
+        world.create_turtle(Mock())
+        eq_([call(power_turtle.return_value, None, None)],
+            world.position_turtle.call_args_list)
+
     def test_position_turtle_uses_parameters(self):
         turtle = _make_mock_turtle(0, 0)
         world = _get_screenless_world()
@@ -123,6 +160,20 @@ class TestTurtleWorld(object):
         world.position_turtle = Mock()
         world.random_position(turtle)
         eq_([call(turtle)], world.position_turtle.call_args_list)
+
+    def test_remove_turtle_stops_a_turtle_from_receiving_ticks(self):
+        raise SkipTest
+
+    def test_tick_calls_all_turtle_callbacks(self):
+        world = _get_screenless_world()
+        world.ticks = 0
+        world.turtles = [_make_mock_turtle(0, 0) for _ in range(3)]
+        world.tick()
+        for turtle in world.turtles:
+            eq_([call(world)], turtle.callback.call_args_list)
+
+    def test_tick_calls_borders_for_each_turtle(self):
+        raise SkipTest
 
 
 @patch(_super, Mock())
