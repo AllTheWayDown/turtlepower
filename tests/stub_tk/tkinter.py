@@ -11,4 +11,4 @@ class Tk(object):
 
 # for py2
 def mainloop():
-    psss
+    pass
