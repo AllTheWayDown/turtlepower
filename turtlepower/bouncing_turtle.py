@@ -1,7 +1,7 @@
 """Basic ramming together of turtlepower and pymunk.
 Bouncing ball demo with a turtle?
 Requires pymunk"""
-from turtlepower.world import TurtleWorld, PowerTurtle, clamp, RawTurtle
+from turtlepower.world import TurtleWorld, PowerTurtle, clamp
 import pymunk as pm
 
 
@@ -22,7 +22,8 @@ class SpaceTurtle(PowerTurtle):
     """Turtle with physics.
     Needs a SpaceWorld (normal turtle world will break)."""
 
-    def setup(self):
+    def __init__(self, world):
+        super(SpaceTurtle, self).__init__(world)
         self.body = pm.Body(1, 1666)
         self.pm_shape = pm.Circle(self.body, 10.0, (0, 0))
         self.pm_shape.elasticity = 0.95
@@ -89,9 +90,8 @@ class WorldWithLines:
 
     def draw(self):
         """Draw the static lines"""
-        #create turtle (no shape - just dot?)
-        dt = RawTurtle(self.world.screen)
-        #self.world.add_turtle(dt)
+        dt = SpaceTurtle(self.world)
+        dt.body.static = True
         dt.hideturtle()
         for line in self.static_lines:
             dt.penup()
@@ -101,6 +101,7 @@ class WorldWithLines:
             dt.pendown()
             #Go to line 2nd coord
             dt.goto(line.b)
+        
 
 
 def world_edge(*args, **kwargs):
