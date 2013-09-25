@@ -8,3 +8,7 @@ class Frame(object):
 
 class Tk(object):
     pass
+
+# for py2
+def mainloop():
+    psss
