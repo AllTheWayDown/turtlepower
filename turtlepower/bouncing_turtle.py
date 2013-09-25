@@ -2,7 +2,11 @@
 Bouncing ball demo with a turtle?
 Requires pymunk"""
 from turtlepower.world import TurtleWorld, PowerTurtle, clamp
-import pymunk as pm
+try:
+    import pymunk as pm
+except ImportError:
+    print("You need to have pymunk installed to run bouncing turtle. See http://www.pymunk.org")
+    exit(1)
 
 
 class SpaceWorld(TurtleWorld):
@@ -101,7 +105,6 @@ class WorldWithLines:
             dt.pendown()
             #Go to line 2nd coord
             dt.goto(line.b)
-        
 
 
 def world_edge(*args, **kwargs):
