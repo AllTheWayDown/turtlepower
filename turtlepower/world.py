@@ -3,6 +3,7 @@ from __future__ import division, print_function, absolute_import
 import sys
 from random import randint, random, shuffle
 from turtle import TurtleScreen, RawTurtle, TK
+from contextlib import contextmanager
 
 
 if sys.version_info[0] < 3:
@@ -12,58 +13,67 @@ else:
     mainloop = False
 
 
-
 DEBUG = False
 
 
 def noisy(value, variance=0.01):
+    """Add a small amount of noise to a value.
+
+    TODO: use proper gaussian noise"""
     size = value * variance
     return value + (random() * size * 2) - size
 
 
-def wrap(turtle, screen_width, screen_height):
-    """wrap a turtle coords around"""
+@contextmanager
+def disable_turtle(t):
+    down = t.isdown()
+    if down:
+        t.penup()
+    yield
+    if down:
+        t.pendown()
+
+
+def wrap(turtle, half_width, half_height):
+    """Provide an pac-man style wrap-around world"""
     x, y = turtle.pos()
     new_x = new_y = None
-    if x > screen_width / 2:
-        new_x = x - screen_width
-    elif x < -screen_width / 2:
-        new_x = x + screen_width
+    if x > half_width:
+        new_x = x - half_width * 2
+    elif x < -half_width:
+        new_x = x + half_width * 2
 
-    if y > screen_height / 2:
-        new_y = y - screen_height
-    elif y < -screen_height / 2:
-        new_y = y + screen_height
+    if y > half_height:
+        new_y = y - half_height * 2
+    elif y < -half_height:
+        new_y = y + half_height * 2
 
-    was_down = turtle.isdown()
-    if new_x is not None:
-        turtle.penup()
-        turtle.setx(new_x)
-    if new_y is not None:
-        turtle.penup()
-        turtle.sety(new_y)
-    if was_down:
-        turtle.pendown()
+    with disable_turtle(turtle):
+        if new_x is not None:
+            turtle.setx(new_x)
+        if new_y is not None:
+            turtle.sety(new_y)
 
 
-def clamp(turtle, screen_width, screen_height):
+def clamp(turtle, half_width, half_height):
     """Clamp turtle to window"""
     x, y = turtle.pos()
     new_x = new_y = None
-    if x > screen_width / 2:
-        new_x = screen_width / 2
-    elif x < -screen_width / 2:
-        new_x = -screen_width / 2
+    if x > half_width:
+        new_x = half_width
+    elif x < -half_width:
+        new_x = -half_width
 
-    if y > screen_height / 2:
-        new_y = screen_height / 2
-    elif y < -screen_height / 2:
-        new_y = -screen_height / 2
+    if y > half_height:
+        new_y = half_height
+    elif y < -half_height:
+        new_y = -half_height
 
-    if new_x is not None:
-        turtle.setx(new_x)
-    if new_y is not None:
-        turtle.sety(new_y)
+    with disable_turtle(turtle):
+        if new_x is not None:
+            turtle.setx(new_x)
+        if new_y is not None:
+            turtle.sety(new_y)
 
 
 class TurtleWorld(object):
@@ -149,7 +159,7 @@ class TurtleWorld(object):
         shuffle(self.turtles)
         for t in self.turtles:
             t.callback(self)
-            self.borders(t, self.width, self.height)
+            self.borders(t, self.half_width, self.half_height)
         self.screen.update()
         self.fps += 1
         self.ticks -= 1

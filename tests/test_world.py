@@ -5,7 +5,14 @@ from mock import call, Mock, patch
 from nose.plugins.skip import SkipTest
 from nose.tools import assert_greater, eq_
 
-from turtlepower.world import clamp, noisy, PowerTurtle, TurtleWorld, wrap
+from turtlepower.world import (
+    clamp,
+    disable_turtle,
+    noisy,
+    PowerTurtle,
+    TurtleWorld,
+    wrap,
+)
 
 
 if sys.version_info[0] < 3:
@@ -29,7 +36,7 @@ def _get_screenless_world():
 
 def _bound_check(bound_func, before, expected):
     mock_turtle = _make_mock_turtle(*before)
-    bound_func(mock_turtle, 10, 10)
+    bound_func(mock_turtle, 5, 5)
     after_x, after_y = before
     if len(mock_turtle.setx.call_args_list):
         setx_args, _ = mock_turtle.setx.call_args
@@ -67,17 +74,19 @@ def test_wrap():
         yield _bound_check, wrap, before, expected
 
 
-def test_wrap_doesnt_put_the_pen_down_if_it_isnt_already_down():
+def test_disable_turtle_doesnt_put_the_pen_down_if_it_isnt_already_down():
     turtle = _make_mock_turtle(-9, -9)
     turtle.isdown.return_value = False
-    wrap(turtle, 10, 10)
+    with disable_turtle(turtle):
+        pass
     eq_(0, turtle.pendown.call_count)
 
 
-def test_wrap_puts_the_pen_down_if_it_was_already_down():
+def test_disable_turtle_puts_the_pen_down_if_it_was_already_down():
     turtle = _make_mock_turtle(-9, -9)
     turtle.isdown.return_value = True
-    wrap(turtle, 10, 10)
+    with disable_turtle(turtle):
+        pass
     eq_(1, turtle.pendown.call_count)
 
 
