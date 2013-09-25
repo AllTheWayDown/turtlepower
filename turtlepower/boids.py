@@ -14,7 +14,7 @@ class Boid(PowerTurtle):
         self.penup()
         self._move = random() * 4
 
-    def callback(self, world):
+    def callback(self):
 
         neighbours = self.get_neighbours(60, 120)
         if not neighbours:

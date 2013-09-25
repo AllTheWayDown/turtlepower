@@ -110,10 +110,10 @@ class TestTurtleWorld(object):
         world.ticks = 0
         turtle = _make_mock_turtle(0, 0)
         world.tick()
-        eq_(0, turtle.callback.call_count)
+        eq_(0, turtle._do_callback.call_count)
         world.add_turtle(turtle)
         world.tick()
-        eq_(1, turtle.callback.call_count)
+        eq_(1, turtle._do_callback.call_count)
 
     def test_create_turtle_means_a_turtle_receives_ticks(self):
         raise SkipTest
@@ -179,7 +179,7 @@ class TestTurtleWorld(object):
         world.turtles = [_make_mock_turtle(0, 0) for _ in range(3)]
         world.tick()
         for turtle in world.turtles:
-            eq_([call(world)], turtle.callback.call_args_list)
+            eq_(turtle._do_callback.called, True)
 
     def test_tick_calls_borders_for_each_turtle(self):
         raise SkipTest

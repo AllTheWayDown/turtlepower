@@ -66,7 +66,7 @@ class SpaceTurtle(PowerTurtle):
         super(SpaceTurtle, self).sety(y)
         self.body.position = self.position()
 
-    def callback(self, world):
+    def callback(self):
         super(SpaceTurtle, self).setpos(self.body.position)
         super(SpaceTurtle, self).settiltangle(self.body.angle)
 

@@ -131,7 +131,7 @@ class TurtleWorld(object):
         t = PowerTurtle(self)
         t.set_callback(callback)
         self.position_turtle(t, pos, angle)
-        self.turtles.append(t)
+        self.add_turtle(t)
         return t
 
     def add_turtle(self, turtle):
@@ -150,6 +150,7 @@ class TurtleWorld(object):
             self.screen.ontimer(self._print_fps, 1000)
         self.ticks = ticks
         self.screen.ontimer(self.tick, 33)
+        self.screen.update()
         if mainloop:
             mainloop()
         else:
@@ -158,7 +159,7 @@ class TurtleWorld(object):
     def tick(self):
         shuffle(self.turtles)
         for t in self.turtles:
-            t.callback(self)
+            t._do_callback()
             self.borders(t, self.half_width, self.half_height)
         self.screen.update()
         self.fps += 1
@@ -170,21 +171,30 @@ class TurtleWorld(object):
 
 
 class PowerTurtleMixin(object):
-    """A set of useful extra methods for a turtle"""
+    """An extension of the basic turtle class.
+
+    Provides some extra methods to make things easy, plus senses and
+    integraton with TurtleWorld"""
+
+    # this string type is can be used as a simple type check for user code,
+    # rather than having to know about isinstance
     type = "turtle"
 
-    def __init__(self, world):
+    def __init__(self, world, *args, **kwargs):
         self.world = world
-        super(PowerTurtleMixin, self).__init__(world.screen)
+        # pass arbitrary args to specific Turtle base class
+        super(PowerTurtleMixin, self).__init__(**kwargs)
         self.setup()
 
     def setup(self):
-        """Initialisation function, called once"""
-        super(PowerTurtleMixin, self).setup()
+        """User-defined initialisation function, called once"""
+
+    def callback(self):
+        """User-defined act function"""
 
     def set_callback(self, callback):
-        """Set the callback to a function, for classes usage"""
-        self.callback = lambda world: callback(self, world)
+        """Set the callback to a function, for classless usage"""
+        self.callback = lambda: callback(self)
 
     def turn_towards(self, desired, amount):
         """Helper to to turn a small amount towards a heading"""
@@ -209,9 +219,17 @@ class PowerTurtleMixin(object):
                     neighbours.append(t)
         return neighbours
 
+    # Framework methods
+    def _do_callback(self):
+        """Framework-level callback. Designed to be overridden in subclasses.
+
+        Can be use to provide extra functionality without affect tthe
+        user-defined callback() function."""
+        self.callback()
+
 
 class PowerTurtle(PowerTurtleMixin, RawTurtle):
+    """PowerTurtle based on stdlib turtle module"""
 
-    def setup(self):
-        """PowerTurtle based on stdlib turtle module"""
-        pass
+    def __init__(self, world):
+        super(PowerTurtle, self).__init__(world, canvas=world.screen)

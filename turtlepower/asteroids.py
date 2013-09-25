@@ -29,14 +29,14 @@ class Asteroid(PowerTurtle):
         self.setheading(self.towards(0, 0) + (random() * 90) - 45)
         self.speed = (random() * 2.0) + 0.1
 
-    def callback(self, world):
-        ship = world.ship
+    def callback(self):
+        ship = self.world.ship
         if self.distance(ship) < self.radius:
             ship.die()
         if ship.rocket and self.distance(ship.rocket) < self.radius:
             self.clear()
-            world.remove_turtle(self)
-            world.remove_turtle(ship.rocket)
+            self.world.remove_turtle(self)
+            self.world.remove_turtle(ship.rocket)
             ship.rocket = None
         else:
             self.penup()
@@ -55,10 +55,10 @@ class Ship(PowerTurtle):
         self.__range = 200
         self.state = "shooting"
 
-    def callback(self, world):
+    def callback(self):
         self.penup()
         if not self.dead:
-            asteroids = [t for t in world.turtles if t.type == 'asteroid']
+            asteroids = [t for t in self.world.turtles if t.type == 'asteroid']
             if not asteroids:
                 self.write("I WIN, PUNY HUMAN")
                 sleep(10)
@@ -74,9 +74,9 @@ class Ship(PowerTurtle):
                 if dangerous:
                     self.run(dangerous)
                 else:
-                    self.shoot(distances[0][0], distances[0][1], world)
+                    self.shoot(distances[0][0], distances[0][1])
 
-    def shoot(self, distance, a, world):
+    def shoot(self, distance, a):
         diff = self.turn_towards(self.towards(a), 6)
         if distance < self.__range:
             if diff < 1:
@@ -135,10 +135,10 @@ class Rocket(PowerTurtle):
         self.pendown()
         self.__range = range
 
-    def callback(self, world):
+    def callback(self):
         if self.__travelled > self.__range:
-            world.remove_turtle(self)
-            world.ship.rocket = None
+            self.world.remove_turtle(self)
+            self.world.ship.rocket = None
         else:
             self.forward(4)
             self.__travelled += 4
